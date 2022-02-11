@@ -7,20 +7,21 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    const ACTION_NEW = 'publish';
+    const ACTION_START = 'publish';
     const ACTION_CANCEL = 'cancel';
     const ACTION_CHOOSE_PERFORMER = 'choose_performer';
     const ACTION_COMPLETE = 'complete';
     const ACTION_FAIL = 'fail';
 
-    private $performerID;
-    private $customerID;
+    private $performerId;
+    private $customerId;
+    private $status;
 
-    public function __construct($performerID, $customerID)
+    public function __construct($performerId, $customerId, $status)
     {
-        $this->$performerID = $performerID;
-        $this->$customerID  = $customerID;
-
+        $this->performerId = $performerId;
+        $this->customerId  = $customerId;
+        $this->status      = $status;
     }
 
     public function getStatusesMap()
@@ -37,7 +38,7 @@ class Task
     public function getActionsMap()
     {
         return [
-            self::ACTION_NEW  => 'Задание опубликовано, исполнитель ещё не найден',
+            self::ACTION_START  => 'Задание опубликовано, исполнитель ещё не найден',
             self::ACTION_CANCEL => 'Заказчик отменил задание',
             self::ACTION_CHOOSE_PERFORMER => 'Заказчик выбрал исполнителя для задания',
             self::ACTION_COMPLETE => 'Заказчик отметил задание как выполненное',
@@ -47,9 +48,8 @@ class Task
 
     public function getStatusByAction($actionName)
     {
-        $status = '';
         switch($actionName) {
-            case self::ACTION_NEW:
+            case self::ACTION_START:
                 $status = self::STATUS_NEW;
                 break;
 
@@ -76,24 +76,39 @@ class Task
         return $status;
     }
 
-    public function getActionsByStatus($statusName)
+    public function getAvailableActions($currentUserId)
     {
-
         $actions = [];
-        switch($statusName) {
-            case self::STATUS_NEW:
-                $actions = [self::ACTION_CANCEL, self::ACTION_CHOOSE_PERFORMER];
-                break;
+        if ( $currentUserId === $this->performerId ) {
+            switch($this->status) {
+                case self::STATUS_NEW:
+                    $actions = [self::ACTION_CHOOSE_PERFORMER];
+                    break;
 
-            case self::STATUS_WORK:
-                $actions = [self::ACTION_COMPLETE,self::ACTION_FAIL];
-                break;
+                case self::STATUS_WORK:
+                    $actions = [self::ACTION_FAIL];
+                    break;
 
-            default:
-                $actions = [];
+                default:
+                    $actions = [];
+            }
+        } elseif ( $currentUserId === $this->customerId ) {
+            switch($this->status) {
+                case self::STATUS_NEW:
+                    $actions = [self::ACTION_CANCEL];
+                    break;
+
+                case self::STATUS_WORK:
+                    $actions = [self::ACTION_COMPLETE];
+                    break;
+
+                default:
+                    $actions = [];
+            }
         }
 
         return $actions;
     }
 
 }
+
