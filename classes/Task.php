@@ -7,21 +7,21 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    const ACTION_START = 'publish';
+    const ACTION_START = 'start';
     const ACTION_CANCEL = 'cancel';
-    const ACTION_CHOOSE_PERFORMER = 'choose_performer';
+    const ACTION_RESPOND = 'respond';
     const ACTION_COMPLETE = 'complete';
     const ACTION_FAIL = 'fail';
 
-    private $performerId;
+    private $executorId;
     private $customerId;
     private $status;
 
-    public function __construct($performerId, $customerId, $status)
+    public function __construct($status, $customerId, $executorId = null)
     {
-        $this->performerId = $performerId;
-        $this->customerId  = $customerId;
-        $this->status      = $status;
+        $this->status     = $status;
+        $this->executorId = $executorId;
+        $this->customerId = $customerId;
     }
 
     public function getStatusesMap()
@@ -40,7 +40,7 @@ class Task
         return [
             self::ACTION_START  => 'Задание опубликовано, исполнитель ещё не найден',
             self::ACTION_CANCEL => 'Заказчик отменил задание',
-            self::ACTION_CHOOSE_PERFORMER => 'Заказчик выбрал исполнителя для задания',
+            self::ACTION_RESPOND => 'Заказчик выбрал исполнителя для задания',
             self::ACTION_COMPLETE => 'Заказчик отметил задание как выполненное',
             self::ACTION_FAIL => 'Исполнитель отказался от выполнения задания',
         ];
@@ -50,65 +50,44 @@ class Task
     {
         switch($actionName) {
             case self::ACTION_START:
-                $status = self::STATUS_NEW;
-                break;
+                return self::STATUS_NEW;
 
             case self::ACTION_CANCEL:
-                $status = self::STATUS_CANCELLED;
-                break;
+                return self::STATUS_CANCELLED;
 
-            case self::ACTION_CHOOSE_PERFORMER:
-                $status = self::STATUS_WORK;
-                break;
+            case self::ACTION_RESPOND:
+                return self::STATUS_WORK;
 
             case self::ACTION_COMPLETE:
-                $status = self::STATUS_DONE;
-                break;
+                return self::STATUS_DONE;
 
             case self::ACTION_FAIL:
-                $status = self::STATUS_FAILED;
-                break;
+                return self::STATUS_FAILED;
 
             default:
-                $status = '';
+                return null;
         }
 
-        return $status;
     }
 
     public function getAvailableActions($currentUserId)
     {
-        $actions = [];
-        if ( $currentUserId === $this->performerId ) {
-            switch($this->status) {
-                case self::STATUS_NEW:
-                    $actions = [self::ACTION_CHOOSE_PERFORMER];
-                    break;
-
-                case self::STATUS_WORK:
-                    $actions = [self::ACTION_FAIL];
-                    break;
-
-                default:
-                    $actions = [];
-            }
-        } elseif ( $currentUserId === $this->customerId ) {
-            switch($this->status) {
-                case self::STATUS_NEW:
-                    $actions = [self::ACTION_CANCEL];
-                    break;
-
-                case self::STATUS_WORK:
-                    $actions = [self::ACTION_COMPLETE];
-                    break;
-
-                default:
-                    $actions = [];
-            }
+        switch($this->status) {
+            case self::STATUS_NEW:
+                if ($currentUserId === $this->customerId) {
+                    return [self::ACTION_START, self::ACTION_CANCEL];
+                }
+                return [self::ACTION_RESPOND];
+            case self::STATUS_WORK:
+                if ($currentUserId === $this->customerId) {
+                    return [self::ACTION_COMPLETE];
+                }
+                if ($currentUserId === $this->executorId) {
+                    return [self::ACTION_FAIL];
+                }
+                return [];
+            default:
+                return [];
         }
-
-        return $actions;
     }
-
 }
-
