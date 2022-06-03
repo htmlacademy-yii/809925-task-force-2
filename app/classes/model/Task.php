@@ -1,4 +1,9 @@
 <?php
+
+namespace App\Classes\Model;
+
+use phpDocumentor\Reflection\Types\Nullable;
+
 class Task
 {
     const STATUS_NEW = 'new';
@@ -17,14 +22,14 @@ class Task
     private $customerId;
     private $status;
 
-    public function __construct($status, $customerId, $executorId = null)
+    public function __construct(string $status, int $customerId, ?int $executorId = null)
     {
         $this->status     = $status;
         $this->executorId = $executorId;
         $this->customerId = $customerId;
     }
 
-    public function getStatusesMap()
+    public function getStatusesMap(): array
     {
         return [
             self::STATUS_NEW => 'Новое',
@@ -35,7 +40,7 @@ class Task
         ];
     }
 
-    public function getActionsMap()
+    public function getActionsMap(): array
     {
         return [
             self::ACTION_START  => 'Задание опубликовано, исполнитель ещё не найден',
@@ -46,7 +51,7 @@ class Task
         ];
     }
 
-    public function getStatusByAction($actionName)
+    public function getStatusByAction(string $actionName): ?string
     {
         switch($actionName) {
             case self::ACTION_START:
@@ -70,7 +75,7 @@ class Task
 
     }
 
-    public function getAvailableActions($currentUserId)
+    public function getAvailableActions(int $currentUserId): array
     {
         switch($this->status) {
             case self::STATUS_NEW:
