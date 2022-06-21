@@ -46,10 +46,10 @@ CREATE TABLE `cities` (
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `media`
+-- Структура таблицы `files`
 --
 
-CREATE TABLE `media` (
+CREATE TABLE `files` (
   `id` bigint(20) NOT NULL,
   `url` varchar(100) NOT NULL,
   `type` varchar(100) NOT NULL
@@ -66,29 +66,26 @@ CREATE TABLE `reviews` (
   `author_id` bigint(20) NOT NULL,
   `executor_id` bigint(20) NOT NULL,
   `task_id` bigint(20) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL,
+  FOREIGN KEY (author_id)  REFERENCES users (id),
+  FOREIGN KEY (executor_id)  REFERENCES users (id),
+  FOREIGN KEY (task_id)  REFERENCES tasks (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `roles`
+-- Структура таблицы `responses`
 --
 
-CREATE TABLE `roles` (
+CREATE TABLE `responses` (
   `id` bigint(20) NOT NULL,
-  `name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `statuses`
---
-
-CREATE TABLE `statuses` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `executor_id` bigint(20) NOT NULL,
+  `task_id` bigint(20) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_updated_at` timestamp NULL DEFAULT NULL,
+  FOREIGN KEY (executor_id)  REFERENCES users (id),
+  FOREIGN KEY (task_id)  REFERENCES tasks (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -99,37 +96,34 @@ CREATE TABLE `statuses` (
 
 CREATE TABLE `tasks` (
   `id` bigint(20) NOT NULL,
+  `category_id` bigint(20) NOT NULL,
+  `author_id` bigint(20) NOT NULL,
+  `executor_id` bigint(20) NOT NULL,
   `title` varchar(100) NOT NULL,
   `description` text NOT NULL,
   `budget` float NOT NULL,
   `deadline` datetime NOT NULL,
-  `location` text NOT NULL,
+  `location_id`  bigint(20) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` bigint(100) NOT NULL
+  `status` varchar(100) NOT NULL,
+  FOREIGN KEY (category_id)  REFERENCES categories (id),
+  FOREIGN KEY (author_id)  REFERENCES users (id),
+  FOREIGN KEY (executor_id)  REFERENCES users (id),
+  FOREIGN KEY (location_id)  REFERENCES locations (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `task_categories_relationships`
+-- Структура таблицы `task_files`
 --
 
-CREATE TABLE `task_categories_relationships` (
+CREATE TABLE `task_files` (
   `id` bigint(20) NOT NULL,
   `task_id` bigint(20) NOT NULL,
-  `category_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `task_meta`
---
-
-CREATE TABLE `task_meta` (
-  `id` bigint(20) NOT NULL,
-  `task_id` bigint(20) NOT NULL,
-  `file_id` bigint(20) NOT NULL
+  `file_id` bigint(20) NOT NULL,
+  FOREIGN KEY (task_id)  REFERENCES tasks (id),
+  FOREIGN KEY (file_id)  REFERENCES files (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -145,28 +139,45 @@ CREATE TABLE `users` (
   `phone` varchar(11) NOT NULL,
   `telegram` varchar(100) DEFAULT NULL,
   `password` varchar(100) NOT NULL,
-  `role` bigint(100) NOT NULL,
-  `city` bigint(100) NOT NULL,
-  `avatar` bigint(100) DEFAULT NULL,
+  `role` varchar(100) NOT NULL,
+  `city_id` bigint(100) NOT NULL,
+  `avatar_id` bigint(100) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `description` text,
   `current_rating` float DEFAULT NULL,
   `registered_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_updated_at` timestamp NULL DEFAULT NULL
+  `last_updated_at` timestamp NULL DEFAULT NULL,
+  FOREIGN KEY (city_id)  REFERENCES cities (id),
+  FOREIGN KEY (avatar_id)  REFERENCES files (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `locations`
+--
+
+CREATE TABLE `locations` (
+  `id` bigint(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `longitude` float NOT NULL,
+  `latitude` float NOT NULL,
+  `registered_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `user_categories_relationships`
+-- Структура таблицы `user_categories`
 --
 
-CREATE TABLE `user_categories_relationships` (
+CREATE TABLE `user_categories` (
   `id` bigint(20) NOT NULL,
   `user_id` bigint(20) NOT NULL,
-  `category_id` bigint(20) NOT NULL
+  `category_id` bigint(20) NOT NULL,
+  FOREIGN KEY (user_id)  REFERENCES users (id),
+  FOREIGN KEY (category_id)  REFERENCES categories (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -185,10 +196,16 @@ ALTER TABLE `categories`
 ALTER TABLE `cities`
   ADD PRIMARY KEY (`id`);
 
+  --
+-- Индексы таблицы `responses`
 --
--- Индексы таблицы `media`
+ALTER TABLE `responses`
+  ADD PRIMARY KEY (`id`);
+
 --
-ALTER TABLE `media`
+-- Индексы таблицы `files`
+--
+ALTER TABLE `files`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -198,33 +215,15 @@ ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `roles`
---
-ALTER TABLE `roles`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `statuses`
---
-ALTER TABLE `statuses`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Индексы таблицы `tasks`
 --
 ALTER TABLE `tasks`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `task_categories_relationships`
+-- Индексы таблицы `task_files`
 --
-ALTER TABLE `task_categories_relationships`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `task_meta`
---
-ALTER TABLE `task_meta`
+ALTER TABLE `task_files`
   ADD PRIMARY KEY (`task_id`);
 
 --
@@ -234,9 +233,9 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `user_categories_relationships`
+-- Индексы таблицы `user_categories`
 --
-ALTER TABLE `user_categories_relationships`
+ALTER TABLE `user_categories`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -256,9 +255,15 @@ ALTER TABLE `cities`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `media`
+-- AUTO_INCREMENT для таблицы `responses`
 --
-ALTER TABLE `media`
+ALTER TABLE `responses`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `files`
+--
+ALTER TABLE `files`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -268,27 +273,9 @@ ALTER TABLE `reviews`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `roles`
---
-ALTER TABLE `roles`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT для таблицы `statuses`
---
-ALTER TABLE `statuses`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT для таблицы `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT для таблицы `task_categories_relationships`
---
-ALTER TABLE `task_categories_relationships`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -298,9 +285,9 @@ ALTER TABLE `users`
   MODIFY `id` bigint(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT для таблицы `user_categories_relationships`
+-- AUTO_INCREMENT для таблицы `user_categories`
 --
-ALTER TABLE `user_categories_relationships`
+ALTER TABLE `user_categories`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
