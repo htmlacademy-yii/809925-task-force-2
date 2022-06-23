@@ -43,11 +43,11 @@ class Task
     public function getActionsMap(): array
     {
         return [
-            self::ACTION_START  => 'Задание опубликовано, исполнитель ещё не найден',
-            self::ACTION_CANCEL => 'Заказчик отменил задание',
-            self::ACTION_RESPOND => 'Заказчик выбрал исполнителя для задания',
-            self::ACTION_COMPLETE => 'Заказчик отметил задание как выполненное',
-            self::ACTION_FAIL => 'Исполнитель отказался от выполнения задания',
+            self::ACTION_START => new StartAction,
+            self::ACTION_CANCEL => new  CancelAction,
+            self::ACTION_RESPOND => new RespondAction,
+            self::ACTION_COMPLETE => new CompleteAction,
+            self::ACTION_FAIL =>  new FailAction,
         ];
     }
 
