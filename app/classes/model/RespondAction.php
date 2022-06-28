@@ -11,11 +11,11 @@ class RespondAction extends AbstractAction
 
     public function getInnerName() : string 
     {
-        return Task::ACTION_RESPOND;
+        return parent::ACTION_RESPOND;
     }
 
-    public function checkVerification(int $executorId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
-        return ($customerId === $userId);
+        return is_null($executorID) && $userId !== $customerId;
     }
 }

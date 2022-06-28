@@ -12,10 +12,10 @@ class StartAction extends AbstractAction
 
     public function getInnerName() : string 
     {
-        return Task::ACTION_START;
+        return parent::ACTION_START;
     }
    
-    public function checkVerification(int $executorId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
         return ($customerId === $userId);
     }

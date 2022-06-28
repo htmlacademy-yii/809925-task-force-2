@@ -11,10 +11,10 @@ class CancelAction extends AbstractAction
    
     public function getInnerName() : string 
     {
-        return Task::ACTION_CANCEL;
+        return parent::ACTION_CANCEL;
     }
    
-    public function checkVerification(int $executoId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executoId, int $customerId, int $userId) : bool 
     {
         return ($customerId === $userId);
     }

@@ -12,10 +12,10 @@ class FailAction extends AbstractAction
 
     public function getInnerName() : string 
     {
-        return Task::ACTION_FAIL;
+        return parent::ACTION_FAIL;
     }
    
-    public function checkVerification(int $executorId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
         return ($executorId === $userId);
     }

@@ -11,10 +11,10 @@ class CompleteAction extends AbstractAction
 
     public function getInnerName() : string 
     {
-        return Task::ACTION_COMPLETE;
+        return parent::ACTION_COMPLETE;
     }
 
-    public function checkVerification(int $executorId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
         return ($customerId === $userId);
     }

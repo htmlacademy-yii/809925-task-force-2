@@ -12,12 +12,6 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    const ACTION_START = 'start';
-    const ACTION_CANCEL = 'cancel';
-    const ACTION_RESPOND = 'respond';
-    const ACTION_COMPLETE = 'complete';
-    const ACTION_FAIL = 'fail';
-
     private $executorId;
     private $customerId;
     private $status;
@@ -29,6 +23,7 @@ class Task
         $this->customerId = $customerId;
     }
 
+    /*
     public function getStatusesMap(): array
     {
         return [
@@ -43,56 +38,68 @@ class Task
     public function getActionsMap(): array
     {
         return [
-            self::ACTION_START => new StartAction,
-            self::ACTION_CANCEL => new  CancelAction,
-            self::ACTION_RESPOND => new RespondAction,
-            self::ACTION_COMPLETE => new CompleteAction,
-            self::ACTION_FAIL =>  new FailAction,
+            self::ACTION_START => new StartAction(),
+            self::ACTION_CANCEL => new  CancelAction(),
+            self::ACTION_RESPOND => new RespondAction(),
+            self::ACTION_COMPLETE => new CompleteAction(),
+            self::ACTION_FAIL =>  new FailAction(),
         ];
     }
 
-    public function getStatusByAction(string $actionName): ?string
+    */
+
+    public function getStatusByAction(AbstractAction $action): ?string
     {
-        switch($actionName) {
-            case self::ACTION_START:
+        switch($action->getInnerName()) {
+            case AbstractAction::ACTION_START:
                 return self::STATUS_NEW;
 
-            case self::ACTION_CANCEL:
+            case AbstractAction::ACTION_CANCEL:
                 return self::STATUS_CANCELLED;
 
-            case self::ACTION_RESPOND:
+            case AbstractAction::ACTION_RESPOND:
                 return self::STATUS_WORK;
 
-            case self::ACTION_COMPLETE:
+            case AbstractAction::ACTION_COMPLETE:
                 return self::STATUS_DONE;
 
-            case self::ACTION_FAIL:
+            case AbstractAction::ACTION_FAIL:
                 return self::STATUS_FAILED;
 
             default:
                 return null;
         }
-
     }
+    
 
     public function getAvailableActions(int $currentUserId): array
     {
+
+        $availableActions = [];
         switch($this->status) {
             case self::STATUS_NEW:
-                if ($currentUserId === $this->customerId) {
-                    return [self::ACTION_START, self::ACTION_CANCEL];
+                if (StartAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                    $availableActions[] = new StartAction();
                 }
-                return [self::ACTION_RESPOND];
+                if (CancelAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                    $availableActions[] = new CancelAction();
+                }
+                if (RespondAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                    $availableActions[] = new RespondAction();
+                }
+                break;
             case self::STATUS_WORK:
-                if ($currentUserId === $this->customerId) {
-                    return [self::ACTION_COMPLETE];
+                if (CompleteAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                    $availableActions[] = new CompleteAction();
                 }
-                if ($currentUserId === $this->executorId) {
-                    return [self::ACTION_FAIL];
+                if (FailAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                    $availableActions[] = new FailAction();
                 }
-                return [];
+                break;
             default:
-                return [];
+                break;
         }
+
+        return $availableActions;
     }
 }
