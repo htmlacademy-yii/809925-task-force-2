@@ -23,7 +23,7 @@ class Task
         $this->customerId = $customerId;
     }
 
-    /*
+    
     public function getStatusesMap(): array
     {
         return [
@@ -35,35 +35,22 @@ class Task
         ];
     }
 
-    public function getActionsMap(): array
-    {
-        return [
-            self::ACTION_START => new StartAction(),
-            self::ACTION_CANCEL => new  CancelAction(),
-            self::ACTION_RESPOND => new RespondAction(),
-            self::ACTION_COMPLETE => new CompleteAction(),
-            self::ACTION_FAIL =>  new FailAction(),
-        ];
-    }
-
-    */
-
     public function getStatusByAction(AbstractAction $action): ?string
     {
-        switch($action->getInnerName()) {
-            case AbstractAction::ACTION_START:
+        switch(true) {
+            case $action instanceof StartAction:
                 return self::STATUS_NEW;
 
-            case AbstractAction::ACTION_CANCEL:
+            case  $action instanceof CancelAction:
                 return self::STATUS_CANCELLED;
 
-            case AbstractAction::ACTION_RESPOND:
+            case $action instanceof RespondAction:
                 return self::STATUS_WORK;
 
-            case AbstractAction::ACTION_COMPLETE:
+            case $action instanceof CompleteAction:
                 return self::STATUS_DONE;
 
-            case AbstractAction::ACTION_FAIL:
+            case $action instanceof FailAction:
                 return self::STATUS_FAILED;
 
             default:
@@ -71,35 +58,35 @@ class Task
         }
     }
     
-
     public function getAvailableActions(int $currentUserId): array
     {
 
+        $actions = $this->getActionsByStatuses();
         $availableActions = [];
-        switch($this->status) {
-            case self::STATUS_NEW:
-                if (StartAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
-                    $availableActions[] = new StartAction();
-                }
-                if (CancelAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
-                    $availableActions[] = new CancelAction();
-                }
-                if (RespondAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
-                    $availableActions[] = new RespondAction();
-                }
-                break;
-            case self::STATUS_WORK:
-                if (CompleteAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
-                    $availableActions[] = new CompleteAction();
-                }
-                if (FailAction::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
-                    $availableActions[] = new FailAction();
-                }
-                break;
-            default:
-                break;
+
+        foreach ($actions[$this->status] as $action) {
+            if ($action::checkVerification($this->executorId, $this->customerId, $currentUserId)) {
+                $availableActions[] = new $action();
+            }
         }
 
         return $availableActions;
+    }
+
+    public function getActionsByStatuses(): array
+    {
+        return [
+            self::STATUS_NEW => [
+                StartAction::class,
+                CancelAction::class,
+                RespondAction::class,
+            ],
+
+            self::STATUS_WORK => [
+                CompleteAction::class,
+                FailAction::class,
+            ]
+            
+        ];
     }
 }

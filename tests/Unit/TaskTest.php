@@ -17,37 +17,6 @@ class TaskTest extends TestCase
     const TEST_EXECUTOR_ID = 2;
     const TEST_RANDOM_USER_ID = 3;
 
-    public function getActionStart(): StartAction
-    {
-        return new StartAction();
-    }
-    public function getActionCancel(): CancelAction
-    {
-        return new CancelAction();
-    }
-    public function getActionComplete(): CompleteAction
-    {
-        return new CompleteAction();
-    }
-    public function getActionFail(): FailAction
-    {
-        return new FailAction();
-    }
-    public function getActionRespond(): RespondAction
-    {
-        return new RespondAction();
-    }
-
-    public function getActionsNames($actions): array
-    {
-        return array_map(
-            function($action) {
-                return $action->getInnerName();
-            },
-            $actions
-        );
-    }
-
     public function testActionsStart()
     {
         $task = new Task(Task::STATUS_NEW, self::TEST_CUSTOMER_ID);
@@ -55,8 +24,8 @@ class TaskTest extends TestCase
 
         $this->assertEqualsCanonicalizing(
             [
-                $this->getActionStart()->getInnerName(),
-                $this->getActionCancel()->getInnerName(),
+                StartAction::class,
+                CancelAction::class,
             ],
             $this->getActionsNames($availableActions)
         );
@@ -69,7 +38,7 @@ class TaskTest extends TestCase
 
         $this->assertEqualsCanonicalizing(
             [
-                $this->getActionRespond()->getInnerName(),
+                RespondAction::class,
             ],
             $this->getActionsNames($availableActions)
         );
@@ -82,7 +51,7 @@ class TaskTest extends TestCase
 
         $this->assertEqualsCanonicalizing(
             [
-                $this->getActionComplete()->getInnerName(),
+                CompleteAction::class,
             ],
             $this->getActionsNames($availableActions)
         );
@@ -95,7 +64,7 @@ class TaskTest extends TestCase
 
         $this->assertEqualsCanonicalizing(
             [
-                $this->getActionFail()->getInnerName(),
+                FailAction::class,
             ],
             $this->getActionsNames($availableActions)
         );
@@ -112,6 +81,11 @@ class TaskTest extends TestCase
     public function testGetStatusByAction()
     {
         $task = new Task(Task::STATUS_NEW, 1, 2);
-        $this->assertEquals(Task::STATUS_CANCELLED, $task->getStatusByAction($this->getActionCancel()));
+        $this->assertEquals(Task::STATUS_CANCELLED, $task->getStatusByAction(new CancelAction()));
+    }
+
+    public function getActionsNames($actions): array
+    {
+        return array_map('get_class', $actions);
     }
 }

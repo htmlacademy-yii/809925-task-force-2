@@ -9,11 +9,6 @@ class FailAction extends AbstractAction
     {
         return 'Исполнитель отказался от выполнения задания';
     }
-
-    public function getInnerName() : string 
-    {
-        return parent::ACTION_FAIL;
-    }
    
     public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
