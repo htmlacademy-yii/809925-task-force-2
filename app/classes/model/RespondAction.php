@@ -11,6 +11,6 @@ class RespondAction extends AbstractAction
 
     public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
-        return is_null($executorID) && $userId !== $customerId;
+        return is_null($executorId) && $userId !== $customerId;
     }
 }

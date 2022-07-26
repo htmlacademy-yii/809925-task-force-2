@@ -4,6 +4,8 @@ namespace App\Classes\Model;
 
 use phpDocumentor\Reflection\Types\Nullable;
 
+use  App\Classes\Exceptions;
+
 class Task
 {
     const STATUS_NEW = 'new';
@@ -18,6 +20,15 @@ class Task
 
     public function __construct(string $status, int $customerId, ?int $executorId = null)
     {
+
+        if (!array_key_exists($status, $this->getStatusesMap())) {
+            throw new ExceptionTask("Некорректный статус");
+        }
+
+        if ($customerId === $executorId) {
+            throw new ExceptionTask("Заказчик не может быть исполнителем");
+        }
+        
         $this->status     = $status;
         $this->executorId = $executorId;
         $this->customerId = $customerId;
