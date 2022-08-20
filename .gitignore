@@ -7,3 +7,5 @@
 *.sublime*
 Thumbs.db
 vendor
+cities.seeds.sql
+categories.seeds.sql
