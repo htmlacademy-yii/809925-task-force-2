@@ -72,32 +72,4 @@ class ImporterSqlTest extends TestCase
         $classInstance->import();
     }
 
-    public function testCitiesInsertQueryString()
-    {
-        $classInstance = new ImporterSql(
-            self::CITIES['filename'],
-            self::CITIES['columns'], 
-            self::CITIES['tableName']
-        );
-        $classInstance->import();
-
-        $query = $classInstance->setInsertQueryString();
-        $res = $classInstance->setInsertQueryIntoFile();
-        $this->assertIsInt($res);
-    }
-
-    public function testCategoriesInsertQueryString()
-    {
-        $classInstance = new ImporterSql(
-            self::CATEGORIES['filename'],
-            self::CATEGORIES['columns'], 
-            self::CATEGORIES['tableName']
-        );
-        $classInstance->import();
-
-        $query = $classInstance->setInsertQueryString();
-        $res = $classInstance->setInsertQueryIntoFile();
-        $this->assertIsInt($res);
-    }
-
 }
