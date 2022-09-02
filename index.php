@@ -6,7 +6,7 @@ use App\Classes\Model\ImporterSql;
 
 // Cities
 $citiesClassInstance = new ImporterSql(
-    'data/cities.csv',
+    './data/cities.csv',
     [
         'name' => 'name',
         'lat' => 'latitude',
@@ -20,7 +20,7 @@ $citiesClassInstance->setInsertQueryIntoFile();
 
 // Categories
 $categoriesClassInstance = new ImporterSql(
-    'data/categories.csv',
+    './data/categories.csv',
     [
         'name' => 'name',
         'icon' => 'slug',

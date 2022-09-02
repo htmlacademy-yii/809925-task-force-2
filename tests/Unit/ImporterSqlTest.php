@@ -10,7 +10,7 @@ use App\Classes\Exceptions\SourceFileException;
 class ImporterSqlTest extends TestCase
 {
     const CITIES = [
-        'filename' => 'data/cities.csv',
+        'filename' => './data/cities.csv',
         'columns' => [
             'name' => 'name',
             'lat' => 'latitude',
@@ -65,7 +65,7 @@ class ImporterSqlTest extends TestCase
         $this->expectExceptionMessage('Такого файла не существует');
 
         $classInstance = new ImporterSql(
-            'data/nonfile', 
+            './data/nonfile', 
             self::CITIES['columns'], 
             self::CITIES['tableName']
         );
