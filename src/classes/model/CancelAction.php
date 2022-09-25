@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Model;
+namespace Src\Classes\Model;
 
 class CancelAction extends AbstractAction 
 {
@@ -9,7 +9,7 @@ class CancelAction extends AbstractAction
         return 'Заказчик отменил задание';
     }
    
-    public static function checkVerification(?int $executoId, int $customerId, int $userId) : bool 
+    public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool
     {
         return ($customerId === $userId);
     }

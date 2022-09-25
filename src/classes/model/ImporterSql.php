@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Classes\Model;
+namespace Src\Classes\Model;
 
-use App\Classes\Exceptions\FileFormatException;
-use App\Classes\Exceptions\SourceFileException;
+use Src\Classes\Exceptions\FileFormatException;
+use Src\Classes\Exceptions\SourceFileException;
 use \SplFileObject;
 
 class ImporterSql

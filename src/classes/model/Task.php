@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Classes\Model;
+namespace Src\Classes\Model;
 
-use phpDocumentor\Reflection\Types\Nullable;
-
-use  App\Classes\Exceptions;
+use  Src\Classes\Exceptions;
 
 class Task
 {

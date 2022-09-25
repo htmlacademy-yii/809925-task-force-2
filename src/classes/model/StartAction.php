@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Classes\Model;
+namespace Src\Classes\Model;
 
-class CompleteAction extends AbstractAction 
+class StartAction extends AbstractAction 
 {
+
     public function getName() : string 
     {
-        return 'Заказчик отметил задание как выполненное';
+       return 'Задание опубликовано, исполнитель ещё не найден';
     }
-
+   
     public static function checkVerification(?int $executorId, int $customerId, int $userId) : bool 
     {
         return ($customerId === $userId);

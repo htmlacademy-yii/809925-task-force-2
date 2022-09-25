@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Classes\Model;
-
+namespace Src\Classes\Model;
 
 abstract class AbstractAction 
 {

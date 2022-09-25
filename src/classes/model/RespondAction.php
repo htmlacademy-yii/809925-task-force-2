@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Model;
+namespace Src\Classes\Model;
 
 class RespondAction extends AbstractAction 
 {
