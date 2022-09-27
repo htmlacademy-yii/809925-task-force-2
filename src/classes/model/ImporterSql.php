@@ -1,9 +1,9 @@
 <?php
 
-namespace Src\Classes\Model;
+namespace TaskForce\classes\model;
 
-use Src\Classes\Exceptions\FileFormatException;
-use Src\Classes\Exceptions\SourceFileException;
+use TaskForce\classes\exceptions\FileFormatException;
+use TaskForce\classes\exceptions\SourceFileException;
 use \SplFileObject;
 
 class ImporterSql

@@ -1,8 +1,8 @@
 <?php
 
-namespace Src\Classes\Model;
+namespace TaskForce\classes\model;
 
-use  Src\Classes\Exceptions;
+use TaskForce\classes\exceptions;
 
 class Task
 {
