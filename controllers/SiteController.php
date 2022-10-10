@@ -65,7 +65,7 @@ class SiteController extends Controller
     {
         // City
         $cityData = [
-            'name' => 'Barcelona',
+            'name' => 'Madrid',
             'longitude' => 123321,
             'latitude' => 321123,
         ];
@@ -81,7 +81,7 @@ class SiteController extends Controller
 
         // User
         $userData = [
-            'name' => 'Roni',
+            'name' => 'Svyatoslav',
             'email' => 'mail@gmail.com',
             'phone' => '+7999888776',
             'password' => 'password',
@@ -99,7 +99,7 @@ class SiteController extends Controller
             $user->save();
         }
 
-        printf('User: %s, City - %s', $user->city->name, $city->name);
+        printf('User: %s, City - %s', $user->name, $city->name);
 
         return $this->render('index');
     }
