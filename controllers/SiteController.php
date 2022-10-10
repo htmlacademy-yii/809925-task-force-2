@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\City;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,6 +63,44 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        // City
+        $cityData = [
+            'name' => 'Madrid',
+            'longitude' => 123321,
+            'latitude' => 321123,
+        ];
+        $city = City::findOne([
+            'name' => $cityData['name'],
+        ]);
+        if (! $city) {
+            $city = new City();
+            $city->attributes = $cityData;
+
+            $city->save();
+        }
+
+        // User
+        $userData = [
+            'name' => 'Svyatoslav',
+            'email' => 'mail@gmail.com',
+            'phone' => '+7999888776',
+            'password' => 'password',
+            'role' => 'admin',
+        ];
+
+        $user = User::findOne([
+            'name' => $userData['name'],
+        ]);
+        if (! $user) {
+            $user = new User();
+            $user->attributes = $userData;
+            $user->link('city', $city);
+
+            $user->save();
+        }
+
+        printf('User: %s, City - %s', $user->name, $city->name);
+
         return $this->render('index');
     }
 
@@ -71,7 +111,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (! Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
